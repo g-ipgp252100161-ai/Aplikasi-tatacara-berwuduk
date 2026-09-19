@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mari Belajar Berwuduk - Modul Pembelajaran Interaktif</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font (Fredoka & Inter for clean child-friendly layout) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                        },
+                        amberGold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        purpleVibe: {
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* Glassmorphism cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 25px -5px rgba(3, 105, 161, 0.1), 0 8px 10px -6px rgba(3, 105, 161, 0.1);
+        }
+
+        .btn-bounce {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+        .btn-bounce:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* Water droplet floating animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        /* Pulse highlight */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.9); }
+        }
+        .glow-active {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Hide scrollbars elegantly */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-brand-600 via-brand-500 to-indigo-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-11 h-11 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl shadow-inner border border-white/30 animate-float">
+                    <i class="fa-solid font-sharp fa-droplet"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-wide flex items-center gap-2">
+                        Bijak Wuduk
+                    </h1>
+                    <p class="text-xs text-brand-100 hidden sm:block">Mari Belajar & Bermain Sambil Memahami Tatacara Berwuduk</p>
+                </div>
+            </div>
+
+            <!-- Score Header -->
+            <div class="flex items-center gap-3">
+                <div class="bg-amberGold-500 text-slate-900 px-3 py-1.5 rounded-xl font-bold text-sm shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-star text-amber-900"></i>
+                    <span id="totalStars">0</span> Bintang
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6">
+
+        <!-- HOME / DASHBOARD VIEW -->
+        <section id="view-home" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-gradient-to-br from-white/90 via-brand-50/60 to-indigo-50/80 border-brand-200">
+                <div class="max-w-2xl relative z-10 space-y-4">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-brand-800 leading-tight">
+                        Sempurnakan Wudukmu, Indahkan Solatmu!
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        Selamat datang wahai murid cemerlang! Ketahui syarat, rukun, dan sunat wuduk melalui modul interaktif, panduan visual praktikal, dan permainan yang menyeronokkan.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="switchTab('learn')" class="btn-bounce bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-brand-500/30 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> Mula Belajar Wuduk
+                        </button>
+                        <button onclick="switchTab('practical')" class="btn-bounce bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+                            <i class="fa-solid fa-video"></i> Panduan Visual Praktikal
+                        </button>
+                    </div>
+                </div>
+                <!-- Decorative Water Drops floating background -->
+                <div class="absolute right-[-20px] bottom-[-20px] text-brand-200/40 text-[180px] pointer-events-none select-none">
+                    <i class="fa-solid fa-hand-holding-droplet"></i>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Modules -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Module 1: Mod Belajar -->
+                <div onclick="switchTab('learn')" class="glass-card rounded-3xl p-6 cursor-pointer btn-bounce border-t-4 border-t-brand-500 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">1. Mod Belajar</h3>
+                        <p class="text-slate-600 text-sm">Fahami Rukun Wuduk, perkara Sunat, lafaz Niat tulisan Arab, dan Doa.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-brand-600 font-bold text-sm gap-2">
+                        <span>Penerokaan Mula</span> <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Module 2: Video Animasi Praktikal -->
+                <div onclick="switchTab('practical')" class="glass-card rounded-3xl p-6 cursor-pointer btn-bounce border-t-4 border-t-indigo-500 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-film"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">2. Visual Praktikal</h3>
+                        <p class="text-slate-600 text-sm">Tonton simulasi animasi bergambar praktikal cara berwuduk yang betul tanpa suara.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-indigo-600 font-bold text-sm gap-2">
+                        <span>Tonton Sekarang</span> <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Module 3: Permainan Susun Urutan -->
+                <div onclick="switchTab('game-order')" class="glass-card rounded-3xl p-6 cursor-pointer btn-bounce border-t-4 border-t-amberGold-500 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amberGold-600 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-arrow-down-1-9"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">3. Susun Urutan</h3>
+                        <p class="text-slate-600 text-sm">Uji kecekapan menyusun langkah-langkah wuduk dengan semakan jawapan salah berpenanda merah.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-amberGold-600 font-bold text-sm gap-2">
+                        <span>Main Sekarang</span> <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Module 4: Pengasingan Rukun & Sunat -->
+                <div onclick="switchTab('game-sort')" class="glass-card rounded-3xl p-6 cursor-pointer btn-bounce border-t-4 border-t-purpleVibe-500 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-purple-100 text-purpleVibe-600 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">4. Rukun vs Sunat</h3>
+                        <p class="text-slate-600 text-sm">Asingkan mana satu perbuatan Rukun Wuduk dan mana satu perbuatan Sunat Wuduk.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-purpleVibe-600 font-bold text-sm gap-2">
+                        <span>Main Sekarang</span> <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress & Achievement Section -->
+            <div class="glass-card rounded-3xl p-6 border-brand-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amberGold-500"></i> Status Kejayaan Kamu
+                        </h3>
+                        <p class="text-xs text-slate-500">Selesaikan tugasan dan permainan untuk membuka Sijil Wuduk Cemerlang!</p>
+                    </div>
+                    <button onclick="switchTab('cert')" class="btn-bounce bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-award"></i> Lihat Sijil Pencapaian
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEARN MODULE VIEW -->
+        <section id="view-learn" class="space-y-6 hidden">
+            <!-- Header back bar -->
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('home')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="setLearnFilter('all')" id="filterBtn-all" class="learn-filter-btn px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 text-white shadow">Semua Langkah</button>
+                    <button onclick="setLearnFilter('rukun')" id="filterBtn-rukun" class="learn-filter-btn px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-600 border border-slate-200">Hanya Rukun (6)</button>
+                    <button onclick="setLearnFilter('sunat')" id="filterBtn-sunat" class="learn-filter-btn px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-600 border border-slate-200">Hanya Sunat</button>
+                </div>
+            </div>
+
+            <!-- Niat Wuduk Interactive Box -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-800 text-white shadow-xl relative overflow-hidden">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+                    <div class="space-y-3 text-center md:text-left flex-1">
+                        <span class="bg-amberGold-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            Rukun 1: Niat Wuduk
+                        </span>
+                        <h3 class="text-2xl font-bold">Lafaz Niat Wuduk</h3>
+                        
+                        <!-- Tulisan Arab -->
+                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center my-3">
+                            <p class="text-3xl sm:text-4xl font-serif text-amberGold-300 font-extrabold leading-loose tracking-wide" dir="rtl">
+                                نَوَيْتُ رَفْعَ الْحَدَثِ الْأَصْغَرِ لِلَّهِ تَعَالَى
+                            </p>
+                        </div>
+
+                        <p class="italic text-amberGold-200 font-semibold text-base sm:text-lg">
+                            " Nawaitu rafa'al hadasil asghari lillahi ta'ala "
+                        </p>
+                        <p class="text-sm font-medium text-white/90">
+                            <span class="font-bold text-amberGold-400">Maksud:</span> "Sahaja aku mengangkat hadas kecil kerana Allah Ta'ala."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid of Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="learnStepsGrid">
+                <!-- Injected via Javascript -->
+            </div>
+
+            <!-- Doa Selepas Wuduk Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 bg-white border-2 border-indigo-200 shadow-md">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-hands-praying"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">Doa Selepas Berwuduk (Sunat)</h3>
+                        <p class="text-xs text-slate-500">Membaca doa menghadap kiblat selepas selesai berwuduk</p>
+                    </div>
+                </div>
+
+                <!-- Tulisan Arab Doa -->
+                <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 text-center my-3">
+                    <p class="text-2xl sm:text-3xl font-serif text-indigo-950 font-bold leading-loose" dir="rtl">
+                        أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيْكَ لَهُ ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُوْلُهُ
+                    </p>
+                </div>
+
+                <p class="italic text-indigo-800 font-semibold text-sm sm:text-base my-2 text-center">
+                    " Asyhadu alla ilaha illallah wahdahu la syarika lah, wa asyhadu anna Muhammadan 'abduhu wa rasuluh "
+                </p>
+                <p class="text-xs sm:text-sm text-slate-600 pt-2 border-t border-slate-200">
+                    <span class="font-bold text-brand-600">Maksud:</span> "Aku bersaksi bahawa tiada Tuhan melainkan Allah yang Maha Tunggal, tiada sekutu bagi-Nya, dan aku bersaksi bahawa Nabi Muhammad itu hamba dan utusan-Nya."
+                </p>
+            </div>
+        </section>
+
+        <!-- PRACTICAL VISUAL / SILENT ANIMATED GUIDE VIEW -->
+        <section id="view-practical" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('home')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
+                </button>
+                <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-video text-indigo-600"></i> Video Sebenar (Tanpa Suara)
+                </span>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border-2 border-indigo-300 max-w-4xl mx-auto space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">Video Praktikal Tatacara Berwuduk</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Tonton video pergerakan sebenar cara berwuduk. Tekan sebarang langkah di bawah untuk melompat terus ke bahagian perbuatan tersebut.</p>
+                </div>
+
+                <!-- Video Source Selector -->
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button onclick="changeVideoSource('puhS4fkW1XY')" id="vidBtn-boy" class="video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow btn-bounce flex items-center gap-2">
+                        <i class="fa-solid fa-child"></i> Video 1: Demonstrasi Lelaki
+                    </button>
+                    <button onclick="changeVideoSource('jD8cvx3V5nM')" id="vidBtn-girl" class="video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 btn-bounce flex items-center gap-2">
+                        <i class="fa-solid fa-child-dress"></i> Video 2: Demonstrasi Perempuan
+                    </button>
+                    <button onclick="changeVideoSource('V1G6GkNNlpM')" id="vidBtn-tutorial" class="video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 btn-bounce flex items-center gap-2">
+                        <i class="fa-solid fa-person-chalkboard"></i> Video 3: Panduan Penuh
+                    </button>
+                </div>
+
+                <!-- Embedded Real Video Player Frame -->
+                <div class="bg-slate-900 rounded-3xl p-2 sm:p-4 text-white shadow-2xl overflow-hidden border-4 border-indigo-500/30">
+                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-black shadow-inner">
+                        <iframe id="wudukVideoPlayer" class="w-full h-full" src="https://www.youtube.com/embed/puhS4fkW1XY?enablejsapi=1&mute=1&autoplay=0&rel=0" title="Demonstrasi Wuduk Sebenar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Interactive Step Timestamps Buttons -->
+                    <div class="mt-4 p-3 bg-slate-800/80 rounded-2xl border border-slate-700 space-y-3">
+                        <div class="text-xs font-bold text-amberGold-300 flex items-center justify-between px-1">
+                            <span><i class="fa-solid fa-hand-pointer mr-1"></i> Tekan Langkah Untuk Lompat Video:</span>
+                            <span id="currentStepLabelDisplay" class="text-white bg-indigo-600 px-2.5 py-0.5 rounded-full text-[11px]">Langkah 1: Basuh Tangan</span>
+                        </div>
+                        
+                        <!-- 8 Step Jump Buttons -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="videoStepButtonsGrid">
+                            <!-- Injected by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step Description Card -->
+                <div class="p-5 rounded-2xl bg-indigo-50/80 border border-indigo-200 flex items-start gap-4">
+                    <div id="videoStepIconContainer" class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl flex-shrink-0 shadow">
+                        <i id="videoStepIcon" class="fa-solid fa-hand-holding-droplet"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <h3 id="videoStepTitle" class="text-lg font-bold text-indigo-950">1. Basuh Tapak Tangan</h3>
+                            <span id="videoStepTypeBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberGold-500 text-slate-900">SUNAT</span>
+                        </div>
+                        <p id="videoStepDesc" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                            Membaca Bismillah dan membasuh kedua-dua tapak tangan sehingga pergelangan tangan sebanyak 3 kali.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Practical Tips Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div class="p-4 rounded-2xl bg-brand-50 border border-brand-200 text-center">
+                        <div class="text-brand-600 font-bold text-sm mb-1"><i class="fa-solid fa-droplet-slash"></i> Jangan Membazir Air</div>
+                        <p class="text-xs text-slate-600">Gunakan aliran air yang kecil sewaktu membasuh anggota wuduk.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                        <div class="text-amber-800 font-bold text-sm mb-1"><i class="fa-solid fa-rotate text-amberGold-600"></i> Ulangi 3 Kali</div>
+                        <p class="text-xs text-slate-600">Disunatkan membasuh setiap anggota wuduk sebanyak 3 kali sempurna.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-center">
+                        <div class="text-indigo-700 font-bold text-sm mb-1"><i class="fa-solid fa-arrow-right-long"></i> Dahulukan Kanan</div>
+                        <p class="text-xs text-slate-600">Sentiasa memulakan basuhan pada anggota sebelah kanan sebelum kiri.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- GAME SELECT VIEW -->
+        <section id="view-game-select" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('home')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
+                </button>
+                <span class="text-slate-600 font-bold text-sm">Pilih Permainan</span>
+            </div>
+
+            <div class="text-center max-w-xl mx-auto space-y-2">
+                <h2 class="text-3xl font-extrabold text-brand-800">Pusat Permainan Wuduk</h2>
+                <p class="text-slate-600 text-sm">Pilih permainan di bawah untuk menguji kefahaman kamu dan kumpul bintang!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                <!-- Game 1 Card -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-t-8 border-t-amberGold-500 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amberGold-600 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Susun Urutan Wuduk</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm">Susun kad perbuatan wuduk mengikut langkah urutan 1 hingga 8 yang sempurna.</p>
+                    </div>
+                    <div class="mt-6 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500 bg-slate-100 p-2 rounded-xl">
+                            <span>Ganjaran:</span>
+                            <span class="text-amberGold-600"><i class="fa-solid fa-star"></i> 3 Bintang</span>
+                        </div>
+                        <button onclick="switchTab('game-order')" class="w-full btn-bounce bg-amberGold-500 hover:bg-amberGold-600 text-slate-900 py-3 rounded-2xl font-bold shadow-md">
+                            Mula Main <i class="fa-solid fa-play ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game 2 Card -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-t-8 border-t-purpleVibe-500 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-purple-100 text-purpleVibe-600 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-boxes-packing"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Rukun vs Sunat</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm">Kelaskan perbuatan wuduk ke dalam bakul Rukun Wuduk atau bakul Sunat Wuduk.</p>
+                    </div>
+                    <div class="mt-6 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500 bg-slate-100 p-2 rounded-xl">
+                            <span>Ganjaran:</span>
+                            <span class="text-amberGold-600"><i class="fa-solid fa-star"></i> 3 Bintang</span>
+                        </div>
+                        <button onclick="switchTab('game-sort')" class="w-full btn-bounce bg-purpleVibe-600 hover:bg-purpleVibe-700 text-white py-3 rounded-2xl font-bold shadow-md">
+                            Mula Main <i class="fa-solid fa-play ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game 3 Card -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-t-8 border-t-brand-500 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-100 text-brand-600 flex items-center justify-center text-3xl">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Kuiz Misi Wuduk</h3>
+                        <p class="text-slate-600 text-xs sm:text-sm">Jawab 5 soalan kuiz menarik mengenai syarat, rukun, dan perkara membatalkan wuduk.</p>
+                    </div>
+                    <div class="mt-6 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500 bg-slate-100 p-2 rounded-xl">
+                            <span>Ganjaran:</span>
+                            <span class="text-amberGold-600"><i class="fa-solid fa-star"></i> 3 Bintang</span>
+                        </div>
+                        <button onclick="switchTab('game-quiz')" class="w-full btn-bounce bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-2xl font-bold shadow-md">
+                            Mula Main <i class="fa-solid fa-play ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME 1: ORDER GAME -->
+        <section id="view-game-order" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('game-select')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Pilih Game Lain
+                </button>
+                <div class="bg-amber-100 text-amber-800 px-3 py-1 rounded-xl text-xs font-bold">
+                    Tugasan: Susun mengikut urutan yang betul
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 border-amberGold-400">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Permainan 1: Susun Urutan Berwuduk</h2>
+                        <p class="text-xs text-slate-500">Tekan kad jawapan di bawah untuk memasukkannya ke petak urutan. Jika salah, petak akan ditanda <span class="font-bold text-rose-600">MERAH</span>.</p>
+                    </div>
+                    <button onclick="resetOrderGame()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 btn-bounce">
+                        <i class="fa-solid fa-rotate-right"></i> Mula Semula
+                    </button>
+                </div>
+
+                <!-- Slots Container -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8" id="orderSlotsContainer">
+                    <!-- 8 Slots generated by JS -->
+                </div>
+
+                <div class="border-t border-slate-200 pt-6">
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-hand-pointer text-brand-500"></i> Kad Pilihan Perbuatan (Tekan untuk isi petak):
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="orderOptionsContainer">
+                        <!-- Shuffled Option Cards generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Check Result Action -->
+                <div class="mt-8 flex justify-center">
+                    <button onclick="checkOrderResult()" id="btnCheckOrder" class="btn-bounce bg-brand-600 hover:bg-brand-700 text-white font-bold px-8 py-3.5 rounded-2xl shadow-lg flex items-center gap-2 text-base">
+                        <i class="fa-solid fa-circle-check"></i> Semak Jawapan Saya
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME 2: SORTING GAME (Rukun vs Sunat) -->
+        <section id="view-game-sort" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('game-select')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Pilih Game Lain
+                </button>
+                <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-xl text-xs font-bold">
+                    Skor: <span id="sortScore">0</span> / 8
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 border-purpleVibe-500">
+                <div class="text-center max-w-lg mx-auto mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Permainan 2: Pengasingan Rukun & Sunat</h2>
+                    <p class="text-xs text-slate-500">Pilih bakul yang betul bagi perbuatan wuduk di bawah!</p>
+                </div>
+
+                <!-- Active Card to Sort -->
+                <div id="sortActiveCardContainer" class="flex justify-center mb-8">
+                    <!-- Current card to sort injected here -->
+                </div>
+
+                <!-- Two Target Baskets -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Rukun Basket -->
+                    <div onclick="submitSortAnswer('rukun')" class="glass-card rounded-3xl p-6 border-2 border-brand-400 bg-brand-50/50 hover:bg-brand-100/80 cursor-pointer btn-bounce text-center space-y-3">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-500 text-white text-3xl mx-auto flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-brand-800">BAKUL RUKUN WUDUK</h3>
+                        <p class="text-xs text-slate-600">Perkara wajib yang MESTI dilakukan (6 perkara)</p>
+                        <div id="rukunBasketList" class="text-left text-xs space-y-1 text-slate-700 font-semibold pt-2"></div>
+                    </div>
+
+                    <!-- Sunat Basket -->
+                    <div onclick="submitSortAnswer('sunat')" class="glass-card rounded-3xl p-6 border-2 border-amberGold-400 bg-amber-50/50 hover:bg-amber-100/80 cursor-pointer btn-bounce text-center space-y-3">
+                        <div class="w-16 h-16 rounded-2xl bg-amberGold-500 text-slate-900 text-3xl mx-auto flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-amber-900">BAKUL SUNAT WUDUK</h3>
+                        <p class="text-xs text-slate-600">Perkara digalakkan untuk menambah pahala wuduk</p>
+                        <div id="sunatBasketList" class="text-left text-xs space-y-1 text-slate-700 font-semibold pt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME 3: TRIVIA QUIZ -->
+        <section id="view-game-quiz" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('game-select')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Pilih Game Lain
+                </button>
+                <div class="bg-brand-100 text-brand-800 px-3 py-1 rounded-xl text-xs font-bold">
+                    Soalan <span id="quizCurrentIndex">1</span> daripada 5
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border-brand-400 max-w-2xl mx-auto">
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-200 h-3 rounded-full mb-6 overflow-hidden">
+                    <div id="quizProgressBar" class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+
+                <div id="quizQuestionBox" class="space-y-6">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CERTIFICATE / ACHIEVEMENTS VIEW -->
+        <section id="view-cert" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <button onclick="switchTab('home')" class="bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-2xl font-bold text-sm border border-slate-200 shadow-sm flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Utama
+                </button>
+                <button onclick="window.print()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-2xl font-bold text-sm shadow flex items-center gap-2 btn-bounce">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan Sijil
+                </button>
+            </div>
+
+            <!-- Printable Certificate Box -->
+            <div class="glass-card rounded-3xl p-8 border-4 border-amberGold-400 bg-gradient-to-b from-white via-amber-50/20 to-brand-50/30 text-center space-y-6 relative overflow-hidden shadow-2xl">
+                <!-- Watermark border decoration -->
+                <div class="absolute top-2 left-2 right-2 bottom-2 border-2 border-dashed border-amberGold-300 rounded-2xl pointer-events-none"></div>
+
+                <div class="w-20 h-20 bg-amberGold-500 text-slate-900 rounded-full flex items-center justify-center text-4xl mx-auto shadow-lg">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div>
+                    <span class="text-xs font-bold tracking-widest text-brand-600 uppercase">Sijil Penghargaan Wuduk</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-1">SIJIL BINTANG WUDUK CEMERLANG</h2>
+                    <p class="text-xs text-slate-500 mt-1">Dianugerahkan kepada Murid Bijak Wuduk</p>
+                </div>
+
+                <!-- Student Name Input / Display -->
+                <div class="max-w-md mx-auto my-4">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Murid / Pelajar:</label>
+                    <input type="text" id="studentNameInput" value="Ahmad / Siti Cemerlang" oninput="updateCertName()" class="w-full text-center text-xl font-bold text-brand-700 bg-white border-2 border-brand-300 rounded-xl px-4 py-2 focus:outline-none focus:border-brand-500 shadow-inner">
+                </div>
+
+                <p class="text-sm text-slate-600 max-w-lg mx-auto">
+                    Telah berjaya mempelajari dan menguasai <span class="font-bold text-brand-700">Tatacara Berwuduk (Rukun & Sunat)</span> serta mengumpul bintang cemerlang dalam permainan interaktif.
+                </p>
+
+                <!-- Stars overview inside cert -->
+                <div class="flex justify-center items-center gap-6 py-2">
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500">Susun Urutan</div>
+                        <div class="text-lg font-bold text-amberGold-500" id="certGame1Stars">★★★</div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-300"></div>
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500">Rukun vs Sunat</div>
+                        <div class="text-lg font-bold text-amberGold-500" id="certGame2Stars">★★★</div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-300"></div>
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500">Kuiz Wuduk</div>
+                        <div class="text-lg font-bold text-amberGold-500" id="certGame3Stars">★★★</div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-between items-end text-left border-t border-slate-200 text-xs text-slate-500">
+                    <div>
+                        <p class="font-bold text-slate-700">Modul Pembelajaran Wuduk</p>
+                        <p>Aplikasi Bijak Wuduk</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-slate-700">Tarikh Kejayaan:</p>
+                        <p id="certDate">2026-08-21</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* DATA STRUCTURES FOR WUDUK STEPS */
+        const WUDUK_STEPS = [
+            {
+                id: 1,
+                title: "Basuh Tapak Tangan",
+                type: "sunat",
+                typeLabel: "SUNAT WUDUK",
+                desc: "Membaca Bismillah dan membasuh kedua-dua tapak tangan sehingga pergelangan tangan sebanyak 3 kali.",
+                icon: "fa-hand-holding-droplet",
+                badgeBg: "bg-amber-100 text-amber-800",
+                videoTimestamp: 15 // Seconds into video
+            },
+            {
+                id: 2,
+                title: "Berkumur-kumur",
+                type: "sunat",
+                typeLabel: "SUNAT WUDUK",
+                desc: "Berkumur-kumur air di dalam mulut untuk membersihkan sisa makanan sebanyak 3 kali.",
+                icon: "fa-mouth",
+                badgeBg: "bg-amber-100 text-amber-800",
+                videoTimestamp: 35
+            },
+            {
+                id: 3,
+                title: "Memasukkan Air ke Hidung",
+                type: "sunat",
+                typeLabel: "SUNAT WUDUK",
+                desc: "Memasukkan sedikit air ke dalam hidung dan mengehembuskannya keluar (Istinsyaq) sebanyak 3 kali.",
+                icon: "fa-wind",
+                badgeBg: "bg-amber-100 text-amber-800",
+                videoTimestamp: 50
+            },
+            {
+                id: 4,
+                title: "Niat & Membasuh Muka",
+                type: "rukun",
+                typeLabel: "RUKUN WAJIB",
+                desc: "Berniat dalam hati dan membasuh seluruh muka dari tempat tumbuh rambut hingga bawah dagu, dan telinga ke telinga.",
+                icon: "fa-face-smile",
+                badgeBg: "bg-brand-100 text-brand-800 font-extrabold border border-brand-300",
+                videoTimestamp: 70
+            },
+            {
+                id: 5,
+                title: "Membasuh Tangan hingga Siku",
+                type: "rukun",
+                typeLabel: "RUKUN WAJIB",
+                desc: "Membasuh kedua-dua tangan bermula dari hujung jari hingga ke siku. Dahulukan tangan kanan.",
+                icon: "fa-hand",
+                badgeBg: "bg-brand-100 text-brand-800 font-extrabold border border-brand-300",
+                videoTimestamp: 100
+            },
+            {
+                id: 6,
+                title: "Menyapu Sebahagian Kepala",
+                type: "rukun",
+                typeLabel: "RUKUN WAJIB",
+                desc: "Menyapu air ke sebahagian kepala atau ubun-ubun rambut sekurang-kurangnya basah.",
+                icon: "fa-hands",
+                badgeBg: "bg-brand-100 text-brand-800 font-extrabold border border-brand-300",
+                videoTimestamp: 130
+            },
+            {
+                id: 7,
+                title: "Membasuh Kedua Telinga",
+                type: "sunat",
+                typeLabel: "SUNAT WUDUK",
+                desc: "Menyapu bahagian luar dan dalam kedua-dua telinga dengan air baharu sebanyak 3 kali.",
+                icon: "fa-ear-listen",
+                badgeBg: "bg-amber-100 text-amber-800",
+                videoTimestamp: 150
+            },
+            {
+                id: 8,
+                title: "Membasuh Kaki hingga Buku Lali",
+                type: "rukun",
+                typeLabel: "RUKUN WAJIB",
+                desc: "Membasuh kedua-dua kaki hingga ke paras buku lali serta menyelahi celah-celah jari kaki. Dahulukan kaki kanan.",
+                icon: "fa-shoe-prints",
+                badgeBg: "bg-brand-100 text-brand-800 font-extrabold border border-brand-300",
+                videoTimestamp: 175
+            }
+        ];
+
+        /* TRIVIA QUIZ QUESTIONS */
+        const QUIZ_QUESTIONS = [
+            {
+                question: "Berapakah jumlah RUKUN WUDUK yang wajib dilakukan?",
+                options: ["4 Perkara", "6 Perkara", "8 Perkara", "10 Perkara"],
+                correct: 1,
+                explanation: "Rukun wuduk ada 6 perkara: Niat, Basuh muka, Basuh tangan hingga siku, Menyapu kepala, Basuh kaki hingga buku lali, dan Tertib."
+            },
+            {
+                question: "Apakah hukum membaca Bismillah sebelum berwuduk?",
+                options: ["Wajib", "Sunat", "Harus", "Makruh"],
+                correct: 1,
+                explanation: "Membaca Bismillah adalah amalan Sunat wuduk yang mendapat pahala."
+            },
+            {
+                question: "Antara berikut, yang manakah MEMBATALKAN wuduk?",
+                options: ["Tidur nyenyak tidak tetap punggung", "Berkumur-kumur", "Membasuh telinga", "Bercakap-cakap"],
+                correct: 0,
+                explanation: "Keluar sesuatu dari kubul/dubur, tidur nyenyak yang tidak tetap punggung, dan hilang akal membatalkan wuduk."
+            },
+            {
+                question: "Apakah maksud 'Tertib' dalam Rukun Wuduk?",
+                options: ["Membasuh dengan laju", "Membasuh sebanyak 3 kali", "Mengikut urutan langkah yang betul", "Mendahulukan anggota kiri"],
+                correct: 2,
+                explanation: "Tertib bermaksud melakukan perbuatan wuduk mengikut urutan dari awal hingga akhir."
+            },
+            {
+                question: "Manakah anggota yang MESTI dibasuh sehingga paras SIKU?",
+                options: ["Kedua-dua kaki", "Kedua-dua tangan", "Telinga", "Muka"],
+                correct: 1,
+                explanation: "Rukun wuduk ketiga adalah membasuh kedua-dua tangan hingga ke paras siku."
+            }
+        ];
+
+        /* STATE MANAGEMENT */
+        let currentTab = 'home';
+        let totalStars = 0;
+        let game1Stars = 0;
+        let game2Stars = 0;
+        let game3Stars = 0;
+
+        let currentVideoId = 'puhS4fkW1XY';
+        let activeVideoStepIndex = 0;
+
+        // Game 1 State
+        let orderUserSlots = Array(8).fill(null);
+        let orderAvailableCards = [];
+        let orderSlotValidation = Array(8).fill(null);
+
+        // Game 2 State
+        let sortItems = [];
+        let currentSortIndex = 0;
+        let sortScore = 0;
+        let rukunList = [];
+        let sunatList = [];
+
+        // Game 3 State
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        /* INITIALIZATION */
+        window.onload = function() {
+            renderLearnSteps('all');
+            initOrderGame();
+            initSortGame();
+            renderVideoStepButtons();
+            updateCertDate();
+        };
+
+        /* VIDEO PLAYER LOGIC */
+        function changeVideoSource(videoId) {
+            currentVideoId = videoId;
+            document.querySelectorAll('.video-select-btn').forEach(b => {
+                b.className = "video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 btn-bounce flex items-center gap-2";
+            });
+
+            if (videoId === 'puhS4fkW1XY') document.getElementById('vidBtn-boy').className = "video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow btn-bounce flex items-center gap-2";
+            if (videoId === 'jD8cvx3V5nM') document.getElementById('vidBtn-girl').className = "video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow btn-bounce flex items-center gap-2";
+            if (videoId === 'V1G6GkNNlpM') document.getElementById('vidBtn-tutorial').className = "video-select-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white shadow btn-bounce flex items-center gap-2";
+
+            playStepVideo(activeVideoStepIndex);
+        }
+
+        function renderVideoStepButtons() {
+            const grid = document.getElementById('videoStepButtonsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            WUDUK_STEPS.forEach((step, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => playStepVideo(idx);
+                const isActive = idx === activeVideoStepIndex;
+
+                btn.className = `p-2 rounded-xl text-xs font-bold text-left transition flex items-center justify-between border ${
+                    isActive 
+                        ? 'bg-amberGold-500 text-slate-900 border-amberGold-400 font-extrabold shadow-md' 
+                        : 'bg-slate-700/80 text-slate-200 border-slate-600 hover:bg-slate-600'
+                }`;
+
+                btn.innerHTML = `
+                    <span class="truncate">${step.id}. ${step.title}</span>
+                    <i class="fa-solid ${isActive ? 'fa-circle-play' : 'fa-play'} text-[10px] ml-1"></i>
+                `;
+                grid.appendChild(btn);
+            });
+
+            // Update details card
+            const currentStep = WUDUK_STEPS[activeVideoStepIndex];
+            document.getElementById('currentStepLabelDisplay').innerText = `Langkah ${currentStep.id}: ${currentStep.title}`;
+            document.getElementById('videoStepTitle').innerText = `${currentStep.id}. ${currentStep.title}`;
+            document.getElementById('videoStepDesc').innerText = currentStep.desc;
+            document.getElementById('videoStepIcon').className = `fa-solid ${currentStep.icon}`;
+            
+            const badge = document.getElementById('videoStepTypeBadge');
+            badge.innerText = currentStep.type === 'rukun' ? 'RUKUN WAJIB' : 'SUNAT WUDUK';
+            badge.className = currentStep.type === 'rukun' 
+                ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-400 text-slate-900' 
+                : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amberGold-500 text-slate-900';
+        }
+
+        function playStepVideo(stepIndex) {
+            activeVideoStepIndex = stepIndex;
+            renderVideoStepButtons();
+
+            const step = WUDUK_STEPS[stepIndex];
+            const startSec = step.videoTimestamp || 0;
+            const iframe = document.getElementById('wudukVideoPlayer');
+            if (iframe) {
+                iframe.src = `https://www.youtube.com/embed/${currentVideoId}?enablejsapi=1&mute=1&autoplay=1&start=${startSec}&rel=0`;
+            }
+        }
+
+        /* NAVIGATION LOGIC */
+        function switchTab(tabId) {
+            const views = ['home', 'learn', 'practical', 'game-select', 'game-order', 'game-sort', 'game-quiz', 'cert'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeView = document.getElementById(`view-${tabId}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            currentTab = tabId;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabId === 'game-quiz') {
+                restartQuiz();
+            }
+        }
+
+        /* PRACTICAL VISUAL STEP PLAYER LOGIC */
+        function renderPracticalStep() {
+            const step = WUDUK_STEPS[practicalStepIndex];
+            if (!step) return;
+
+            document.getElementById('practicalStepBadge').innerText = `Langkah ${step.id} dari ${WUDUK_STEPS.length}`;
+            
+            const tag = document.getElementById('practicalTypeTag');
+            tag.innerText = step.type === 'rukun' ? 'RUKUN WAJIB' : 'SUNAT WUDUK';
+            tag.className = step.type === 'rukun' 
+                ? 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-brand-400 text-slate-900' 
+                : 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amberGold-500 text-slate-900';
+
+            document.getElementById('practicalIcon').className = `fa-solid ${step.icon}`;
+            document.getElementById('practicalTitle').innerText = `${step.id}. ${step.title}`;
+            document.getElementById('practicalActionText').innerText = step.desc;
+
+            // Render progress dots
+            const dotsContainer = document.getElementById('practicalProgressDots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < WUDUK_STEPS.length; i++) {
+                const dot = document.createElement('div');
+                dot.onclick = () => { practicalStepIndex = i; renderPracticalStep(); };
+                dot.className = `h-2 rounded-full cursor-pointer transition-all ${
+                    i === practicalStepIndex ? 'bg-amberGold-400 w-full' : 'bg-slate-700 hover:bg-slate-500 w-full'
+                }`;
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function nextPracticalStep() {
+            practicalStepIndex = (practicalStepIndex + 1) % WUDUK_STEPS.length;
+            renderPracticalStep();
+        }
+
+        function prevPracticalStep() {
+            practicalStepIndex = (practicalStepIndex - 1 + WUDUK_STEPS.length) % WUDUK_STEPS.length;
+            renderPracticalStep();
+        }
+
+        function togglePracticalAutoplay() {
+            if (practicalAutoplayInterval) {
+                stopPracticalAutoplay();
+            } else {
+                startPracticalAutoplay();
+            }
+        }
+
+        function startPracticalAutoplay() {
+            const btn = document.getElementById('btnPracticalAutoplay');
+            btn.innerHTML = `<i class="fa-solid fa-pause"></i> Henti Animasi`;
+            btn.className = "bg-rose-500 hover:bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow btn-bounce";
+            
+            practicalAutoplayInterval = setInterval(() => {
+                nextPracticalStep();
+            }, 3000);
+        }
+
+        function stopPracticalAutoplay() {
+            if (practicalAutoplayInterval) {
+                clearInterval(practicalAutoplayInterval);
+                practicalAutoplayInterval = null;
+            }
+            const btn = document.getElementById('btnPracticalAutoplay');
+            if (btn) {
+                btn.innerHTML = `<i class="fa-solid fa-play"></i> Mainkan Animasi`;
+                btn.className = "bg-amberGold-500 hover:bg-amberGold-600 text-slate-900 px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow btn-bounce";
+            }
+        }
+
+        /* GAME 1: ORDER GAME LOGIC (WITH RED FEEDBACK ON ERRORS) */
+        function initOrderGame() {
+            orderUserSlots = Array(8).fill(null);
+            orderSlotValidation = Array(8).fill(null);
+            orderAvailableCards = [...WUDUK_STEPS].sort(() => Math.random() - 0.5);
+            renderOrderGame();
+        }
+
+        function resetOrderGame() {
+            initOrderGame();
+        }
+
+        function renderOrderGame() {
+            const slotsContainer = document.getElementById('orderSlotsContainer');
+            slotsContainer.innerHTML = '';
+
+            for (let i = 0; i < 8; i++) {
+                const filledCard = orderUserSlots[i];
+                const validation = orderSlotValidation[i]; // null, true (correct), or false (WRONG - RED)
+                
+                const slotDiv = document.createElement('div');
+
+                let slotStyle = 'bg-slate-100/70 border-slate-300 border-dashed';
+                if (filledCard) {
+                    if (validation === true) {
+                        slotStyle = 'bg-blue-50 border-brand-500 border-2 shadow-md'; // Correct
+                    } else if (validation === false) {
+                        slotStyle = 'bg-rose-50 border-rose-500 border-2 shadow-md ring-2 ring-rose-300'; // WRONG - RED MARKER
+                    } else {
+                        slotStyle = 'bg-white border-brand-400 border-2 shadow-md';
+                    }
+                }
+
+                slotDiv.className = `p-3 rounded-2xl border flex flex-col justify-between min-h-[95px] transition ${slotStyle}`;
+
+                if (filledCard) {
+                    let feedbackBadge = '';
+                    if (validation === true) {
+                        feedbackBadge = `<span class="text-[10px] font-extrabold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded"><i class="fa-solid fa-circle-check"></i> Betul</span>`;
+                    } else if (validation === false) {
+                        feedbackBadge = `<span class="text-[10px] font-extrabold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded animate-bounce"><i class="fa-solid fa-circle-xmark"></i> Salah!</span>`;
+                    }
+
+                    slotDiv.innerHTML = `
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+                            <span>Petak ${i + 1}</span>
+                            <div class="flex items-center gap-1">
+                                ${feedbackBadge}
+                                <button onclick="removeFromSlot(${i})" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="text-xs font-bold ${validation === false ? 'text-rose-900' : 'text-slate-800'} mt-1 line-clamp-2">${filledCard.title}</div>
+                        <div class="text-[10px] text-slate-500 flex items-center justify-between mt-1">
+                            <span><i class="fa-solid ${filledCard.icon}"></i> ${filledCard.typeLabel}</span>
+                        </div>
+                    `;
+                } else {
+                    slotDiv.innerHTML = `
+                        <span class="text-xs font-bold text-slate-400">Petak ${i + 1}</span>
+                        <span class="text-xs text-slate-400 italic text-center my-auto">Kosong</span>
+                    `;
+                }
+                slotsContainer.appendChild(slotDiv);
+            }
+
+            const optionsContainer = document.getElementById('orderOptionsContainer');
+            optionsContainer.innerHTML = '';
+
+            orderAvailableCards.forEach((card, idx) => {
+                const cardBtn = document.createElement('div');
+                cardBtn.onclick = () => placeInFirstEmptySlot(card, idx);
+                cardBtn.className = "bg-white hover:bg-brand-50 p-3 rounded-2xl border border-slate-200 shadow cursor-pointer btn-bounce flex flex-col justify-between min-h-[85px]";
+                cardBtn.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800">${card.title}</div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2">
+                        <span class="px-2 py-0.5 rounded ${card.type === 'rukun' ? 'bg-brand-100 text-brand-800' : 'bg-amber-100 text-amber-800'}">${card.typeLabel}</span>
+                        <i class="fa-solid ${card.icon} text-brand-500"></i>
+                    </div>
+                `;
+                optionsContainer.appendChild(cardBtn);
+            });
+        }
+
+        function placeInFirstEmptySlot(card, cardIdx) {
+            const emptyIdx = orderUserSlots.findIndex(s => s === null);
+            if (emptyIdx === -1) {
+                showModal("Petak Penuh", "Sila buang kad dari petak dahulu jika mahu menukar jawapan.", "fa-triangle-exclamation");
+                return;
+            }
+            orderUserSlots[emptyIdx] = card;
+            orderSlotValidation[emptyIdx] = null; // Clear validation on edit
+            orderAvailableCards.splice(cardIdx, 1);
+            renderOrderGame();
+        }
+
+        function removeFromSlot(slotIndex) {
+            const removedCard = orderUserSlots[slotIndex];
+            if (removedCard) {
+                orderAvailableCards.push(removedCard);
+                orderUserSlots[slotIndex] = null;
+                orderSlotValidation[slotIndex] = null; // Clear validation
+                renderOrderGame();
+            }
+        }
+
+        function checkOrderResult() {
+            if (orderUserSlots.some(s => s === null)) {
+                showModal("Belum Selesai!", "Sila isi kesemua 8 petak urutan wuduk terlebih dahulu.", "fa-circle-info");
+                return;
+            }
+
+            let correctCount = 0;
+            orderUserSlots.forEach((step, idx) => {
+                if (step.id === idx + 1) {
+                    orderSlotValidation[idx] = true;
+                    correctCount++;
+                } else {
+                    orderSlotValidation[idx] = false; // MARK RED FOR WRONG ORDER
+                }
+            });
+
+            renderOrderGame();
+
+            if (correctCount === 8) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                game1Stars = 3;
+                updateTotalStars();
+                showModal("TAHNIAH! Sempurna!", "Kamu telah menyusun kesemua 8 urutan berwuduk dengan tepat sekali! (+3 Bintang)", "fa-star");
+            } else {
+                showModal(
+                    "Ada Jawapan Salah!", 
+                    `Kamu mendapat ${correctCount} / 8 betul. Petak bertanda MERAH adalah urutan yang salah. Sila betulkan dan cuba lagi!`, 
+                    "fa-triangle-exclamation"
+                );
+            }
+        }
+
+        /* LEARN MODULE RENDERING */
+        function setLearnFilter(filter) {
+            document.querySelectorAll('.learn-filter-btn').forEach(b => {
+                b.className = "learn-filter-btn px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-slate-600 border border-slate-200";
+            });
+            const activeBtn = document.getElementById(`filterBtn-${filter}`);
+            if (activeBtn) {
+                activeBtn.className = "learn-filter-btn px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-brand-600 text-white shadow";
+            }
+            renderLearnSteps(filter);
+        }
+
+        function renderLearnSteps(filter) {
+            const container = document.getElementById('learnStepsGrid');
+            container.innerHTML = '';
+
+            const filtered = WUDUK_STEPS.filter(s => {
+                if (filter === 'rukun') return s.type === 'rukun';
+                if (filter === 'sunat') return s.type === 'sunat';
+                return true;
+            });
+
+            filtered.forEach(step => {
+                const isRukun = step.type === 'rukun';
+                const card = document.createElement('div');
+                card.className = `glass-card rounded-3xl p-6 border-2 transition hover:shadow-xl flex flex-col justify-between ${
+                    isRukun ? 'border-brand-400 bg-brand-50/20' : 'border-amberGold-300 bg-amber-50/20'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="w-9 h-9 rounded-2xl ${isRukun ? 'bg-brand-600 text-white' : 'bg-amberGold-500 text-slate-900'} flex items-center justify-center font-extrabold text-sm shadow">
+                                ${step.id}
+                            </span>
+                            <span class="text-xs px-3 py-1 rounded-full ${step.badgeBg}">
+                                ${step.typeLabel}
+                            </span>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-800 mb-2">${step.title}</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${step.desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <span>Langkah ${step.id} dari 8</span>
+                        <i class="fa-solid ${step.icon} text-lg ${isRukun ? 'text-brand-500' : 'text-amberGold-500'}"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* GAME 1: ORDER GAME LOGIC */
+        function initOrderGame() {
+            orderUserSlots = Array(8).fill(null);
+            orderAvailableCards = [...WUDUK_STEPS].sort(() => Math.random() - 0.5);
+            renderOrderGame();
+        }
+
+        function resetOrderGame() {
+            initOrderGame();
+        }
+
+        function renderOrderGame() {
+            const slotsContainer = document.getElementById('orderSlotsContainer');
+            slotsContainer.innerHTML = '';
+
+            for (let i = 0; i < 8; i++) {
+                const filledCard = orderUserSlots[i];
+                const slotDiv = document.createElement('div');
+                slotDiv.className = `p-3 rounded-2xl border-2 border-dashed flex flex-col justify-between min-h-[90px] transition ${
+                    filledCard ? 'bg-white border-brand-400 shadow-md' : 'bg-slate-100/70 border-slate-300'
+                }`;
+
+                if (filledCard) {
+                    slotDiv.innerHTML = `
+                        <div class="flex justify-between items-center text-xs font-bold text-brand-700">
+                            <span>Petak ${i + 1}</span>
+                            <button onclick="removeFromSlot(${i})" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <div class="text-xs font-bold text-slate-800 mt-1 line-clamp-2">${filledCard.title}</div>
+                        <div class="text-[10px] text-slate-500 flex items-center gap-1 mt-1">
+                            <i class="fa-solid ${filledCard.icon}"></i> ${filledCard.typeLabel}
+                        </div>
+                    `;
+                } else {
+                    slotDiv.innerHTML = `
+                        <span class="text-xs font-bold text-slate-400">Petak ${i + 1}</span>
+                        <span class="text-xs text-slate-400 italic text-center my-auto">Kosong</span>
+                    `;
+                }
+                slotsContainer.appendChild(slotDiv);
+            }
+
+            const optionsContainer = document.getElementById('orderOptionsContainer');
+            optionsContainer.innerHTML = '';
+
+            orderAvailableCards.forEach((card, idx) => {
+                const cardBtn = document.createElement('div');
+                cardBtn.onclick = () => placeInFirstEmptySlot(card, idx);
+                cardBtn.className = "bg-white hover:bg-brand-50 p-3 rounded-2xl border border-slate-200 shadow cursor-pointer btn-bounce flex flex-col justify-between min-h-[85px]";
+                cardBtn.innerHTML = `
+                    <div class="text-xs font-bold text-slate-800">${card.title}</div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-500 mt-2">
+                        <span class="px-2 py-0.5 rounded ${card.type === 'rukun' ? 'bg-brand-100 text-brand-800' : 'bg-amber-100 text-amber-800'}">${card.typeLabel}</span>
+                        <i class="fa-solid ${card.icon} text-brand-500"></i>
+                    </div>
+                `;
+                optionsContainer.appendChild(cardBtn);
+            });
+        }
+
+        function placeInFirstEmptySlot(card, cardIdx) {
+            const emptyIdx = orderUserSlots.findIndex(s => s === null);
+            if (emptyIdx === -1) {
+                showModal("Petak Penuh", "Sila buang kad dari petak dahulu jika mahu menukar jawapan.", "fa-triangle-exclamation");
+                return;
+            }
+            orderUserSlots[emptyIdx] = card;
+            orderAvailableCards.splice(cardIdx, 1);
+            renderOrderGame();
+        }
+
+        function removeFromSlot(slotIndex) {
+            const removedCard = orderUserSlots[slotIndex];
+            if (removedCard) {
+                orderAvailableCards.push(removedCard);
+                orderUserSlots[slotIndex] = null;
+                renderOrderGame();
+            }
+        }
+
+        function checkOrderResult() {
+            if (orderUserSlots.some(s => s === null)) {
+                showModal("Belum Selesai!", "Sila isi kesemua 8 petak urutan wuduk terlebih dahulu.", "fa-circle-info");
+                return;
+            }
+
+            let correctCount = 0;
+            orderUserSlots.forEach((step, idx) => {
+                if (step.id === idx + 1) correctCount++;
+            });
+
+            if (correctCount === 8) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                game1Stars = 3;
+                updateTotalStars();
+                showModal("TAHNIAH! Sempurna!", "Kamu telah menyusun kesemua 8 urutan berwuduk dengan tepat sekali! (+3 Bintang)", "fa-star");
+            } else {
+                showModal("Cuba Lagi!", `Kamu mendapat ${correctCount} / 8 betul. Semak semula urutan dan cuba lagi!`, "fa-rotate");
+            }
+        }
+
+        /* GAME 2: SORTING GAME LOGIC */
+        function initSortGame() {
+            sortItems = [...WUDUK_STEPS].sort(() => Math.random() - 0.5);
+            currentSortIndex = 0;
+            sortScore = 0;
+            rukunList = [];
+            sunatList = [];
+            document.getElementById('sortScore').innerText = sortScore;
+            renderSortCard();
+        }
+
+        function renderSortCard() {
+            const container = document.getElementById('sortActiveCardContainer');
+            container.innerHTML = '';
+
+            document.getElementById('rukunBasketList').innerHTML = rukunList.map(item => `<div>• ${item}</div>`).join('');
+            document.getElementById('sunatBasketList').innerHTML = sunatList.map(item => `<div>• ${item}</div>`).join('');
+
+            if (currentSortIndex >= sortItems.length) {
+                container.innerHTML = `
+                    <div class="text-center py-6">
+                        <div class="text-4xl text-amberGold-500 mb-2"><i class="fa-solid fa-trophy"></i></div>
+                        <h3 class="text-2xl font-bold text-slate-800">Permainan Selesai!</h3>
+                        <p class="text-sm text-slate-600 mb-4">Skor kamu: ${sortScore} / 8</p>
+                        <button onclick="initSortGame()" class="btn-bounce bg-purpleVibe-600 text-white font-bold px-6 py-2.5 rounded-2xl shadow">
+                            Main Semula
+                        </button>
+                    </div>
+                `;
+                if (sortScore >= 7) {
+                    game2Stars = 3;
+                } else if (sortScore >= 4) {
+                    game2Stars = 2;
+                } else {
+                    game2Stars = 1;
+                }
+                updateTotalStars();
+                return;
+            }
+
+            const current = sortItems[currentSortIndex];
+            const card = document.createElement('div');
+            card.className = "glass-card rounded-3xl p-6 border-4 border-indigo-400 bg-white max-w-sm w-full text-center space-y-3 shadow-xl glow-active";
+            card.innerHTML = `
+                <span class="text-xs font-bold text-slate-400 uppercase">Perbuatan ${currentSortIndex + 1} daripada 8</span>
+                <div class="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 text-3xl mx-auto flex items-center justify-center">
+                    <i class="fa-solid ${current.icon}"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800">${current.title}</h3>
+                <p class="text-xs text-slate-500">${current.desc}</p>
+                <div class="pt-2 text-xs font-bold text-indigo-600">Tekan Bakul Rukun atau Sunat di bawah!</div>
+            `;
+            container.appendChild(card);
+        }
+
+        function submitSortAnswer(chosenType) {
+            if (currentSortIndex >= sortItems.length) return;
+
+            const current = sortItems[currentSortIndex];
+            if (chosenType === current.type) {
+                sortScore++;
+                document.getElementById('sortScore').innerText = sortScore;
+            }
+
+            if (chosenType === 'rukun') {
+                rukunList.push(current.title + (chosenType === current.type ? ' ✓' : ' ✗'));
+            } else {
+                sunatList.push(current.title + (chosenType === current.type ? ' ✓' : ' ✗'));
+            }
+
+            currentSortIndex++;
+            renderSortCard();
+        }
+
+        /* GAME 3: QUIZ LOGIC */
+        function restartQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            document.getElementById('quizCurrentIndex').innerText = currentQuizIndex + 1;
+            const progress = ((currentQuizIndex + 1) / QUIZ_QUESTIONS.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progress}%`;
+
+            const container = document.getElementById('quizQuestionBox');
+            container.innerHTML = '';
+
+            if (currentQuizIndex >= QUIZ_QUESTIONS.length) {
+                if (quizScore >= 4) {
+                    game3Stars = 3;
+                    confetti({ particleCount: 70, spread: 60 });
+                } else if (quizScore >= 2) {
+                    game3Stars = 2;
+                } else {
+                    game3Stars = 1;
+                }
+                updateTotalStars();
+
+                container.innerHTML = `
+                    <div class="text-center space-y-4 py-4">
+                        <div class="w-20 h-20 bg-amberGold-500 text-slate-900 rounded-full flex items-center justify-center text-4xl mx-auto shadow-lg">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800">Tahniah! Kuiz Selesai</h3>
+                        <p class="text-slate-600">Skor Kamu: <span class="text-2xl font-extrabold text-brand-600">${quizScore} / ${QUIZ_QUESTIONS.length}</span></p>
+                        <div class="flex justify-center gap-3 pt-2">
+                            <button onclick="restartQuiz()" class="btn-bounce bg-brand-600 text-white font-bold px-6 py-3 rounded-2xl shadow">
+                                Cuba Lagi <i class="fa-solid fa-rotate-right ml-1"></i>
+                            </button>
+                            <button onclick="switchTab('cert')" class="btn-bounce bg-amberGold-500 text-slate-900 font-bold px-6 py-3 rounded-2xl shadow">
+                                Lihat Sijil <i class="fa-solid fa-award ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const q = QUIZ_QUESTIONS[currentQuizIndex];
+            const qDiv = document.createElement('div');
+            qDiv.className = "space-y-6";
+            qDiv.innerHTML = `
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">${q.question}</h3>
+                <div class="grid grid-cols-1 gap-3">
+                    ${q.options.map((opt, i) => `
+                        <button onclick="selectQuizOption(${i})" class="w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-brand-500 hover:bg-brand-50 font-semibold text-slate-700 transition btn-bounce flex items-center justify-between">
+                            <span>${opt}</span>
+                            <i class="fa-regular fa-circle text-slate-300"></i>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(qDiv);
+        }
+
+        function selectQuizOption(optionIdx) {
+            const q = QUIZ_QUESTIONS[currentQuizIndex];
+            const isCorrect = optionIdx === q.correct;
+
+            if (isCorrect) {
+                quizScore++;
+            }
+
+            showModal(
+                isCorrect ? "Jawapan Tepat! 🎉" : "Kurang Tepat 😅",
+                `${q.explanation}`,
+                isCorrect ? "fa-circle-check" : "fa-circle-xmark"
+            );
+
+            currentQuizIndex++;
+            renderQuizQuestion();
+        }
+
+        /* STARS & CERTIFICATE UPDATES */
+        function updateTotalStars() {
+            totalStars = game1Stars + game2Stars + game3Stars;
+            document.getElementById('totalStars').innerText = totalStars;
+
+            document.getElementById('certGame1Stars').innerText = '★'.repeat(game1Stars) + '☆'.repeat(3 - game1Stars);
+            document.getElementById('certGame2Stars').innerText = '★'.repeat(game2Stars) + '☆'.repeat(3 - game2Stars);
+            document.getElementById('certGame3Stars').innerText = '★'.repeat(game3Stars) + '☆'.repeat(3 - game3Stars);
+        }
+
+        function updateCertName() {
+            // Realtime update
+        }
+
+        function updateCertDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('certDate').innerText = today;
+        }
+
+        /* MODAL UTILITY */
+        function showModal(title, message, iconClass = "fa-circle-info") {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            const iconContainer = document.getElementById('modalIconContainer');
+            iconContainer.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            document.getElementById('modalFeedback').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalFeedback').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
